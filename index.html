@@ -1,84 +1,110 @@
-
+<!DOCTYPE html>
 <html>
 <head>
 	<title>Tic Tac Toe</title>
-	<style>
-		.container {
-			display: flex;
-			flex-direction: column;
-			align-items: center;
+	<style type="text/css">
+		table {
+			border-collapse: collapse;
 		}
-		button {
-			width: 80px;
-			height: 80px;
-			font-size: 40px;
-			margin: 5px;
+		td {
+			width: 50px;
+			height: 50px;
+			border: 1px solid black;
+			text-align: center;
+			font-size: 36px;
+			cursor: pointer;
+		}
+		td:hover {
+			background-color: #ccc;
 		}
 	</style>
 </head>
 <body>
-	<div class="container">
-		<div>
-			<button id="0" onclick="play(this)">-</button>
-			<button id="1" onclick="play(this)">-</button>
-			<button id="2" onclick="play(this)">-</button>
-		</div>
-		<div>
-			<button id="3" onclick="play(this)">-</button>
-			<button id="4" onclick="play(this)">-</button>
-			<button id="5" onclick="play(this)">-</button>
-		</div>
-		<div>
-			<button id="6" onclick="play(this)">-</button>
-			<button id="7" onclick="play(this)">-</button>
-			<button id="8" onclick="play(this)">-</button>
-		</div>
-	</div>
-	<script>
-		let currentPlayer = "X";
-		let gameOver = false;
 
-		function play(button) {
-			if (!gameOver && button.innerText == "-") {
-				button.innerText = currentPlayer;
-				if (checkWin()) {
-					alert(currentPlayer + " wins!");
-					gameOver = true;
-				} else if (checkTie()) {
-					alert("Tie game!");
-					gameOver = true;
-				} else {
-					currentPlayer = currentPlayer == "X" ? "O" : "X";
-				}
+<h1>Tic Tac Toe</h1>
+
+<table>
+	<tr>
+		<td id="0"></td>
+		<td id="1"></td>
+		<td id="2"></td>
+	</tr>
+	<tr>
+		<td id="3"></td>
+		<td id="4"></td>
+		<td id="5"></td>
+	</tr>
+	<tr>
+		<td id="6"></td>
+		<td id="7"></td>
+		<td id="8"></td>
+	</tr>
+</table>
+
+<p id="message"></p>
+
+<script type="text/javascript">
+	var turn = "X";
+	var moves = 0;
+	var gameOver = false;
+
+	function handleClick(event) {
+		if (gameOver) {
+			return;
+		}
+
+		var cell = event.target;
+		if (cell.innerHTML !== "") {
+			return;
+		}
+
+		cell.innerHTML = turn;
+		moves++;
+
+		if (checkWin()) {
+			gameOver = true;
+			document.getElementById("message").innerHTML = turn + " wins!";
+			return;
+		}
+
+		if (moves === 9) {
+			gameOver = true;
+			document.getElementById("message").innerHTML = "Tie game!";
+			return;
+		}
+
+		turn = turn === "X" ? "O" : "X";
+		document.getElementById("message").innerHTML = turn + "'s turn";
+	}
+
+	function checkWin() {
+		var cells = document.getElementsByTagName("td");
+		var combos = [
+			[0, 1, 2], [3, 4, 5], [6, 7, 8], // rows
+			[0, 3, 6], [1, 4, 7], [2, 5, 8], // columns
+			[0, 4, 8], [2, 4, 6] // diagonals
+		];
+
+		for (var i = 0; i < combos.length; i++) {
+			var a = combos[i][0];
+			var b = combos[i][1];
+			var c = combos[i][2];
+
+			if (cells[a].innerHTML === turn && cells[b].innerHTML === turn && cells[c].innerHTML === turn) {
+				return true;
 			}
 		}
 
-		function checkWin() {
-			let cells = document.querySelectorAll("button");
-			let winConditions = [
-				[0, 1, 2], [3, 4, 5], [6, 7, 8], // rows
-				[0, 3, 6], [1, 4, 7], [2, 5, 8], // columns
-				[0, 4, 8], [2, 4, 6] // diagonals
-			];
-			for (let condition of winConditions) {
-				if (cells[condition[0]].innerText != "-" &&
-					cells[condition[0]].innerText == cells[condition[1]].innerText &&
-					cells[condition[1]].innerText == cells[condition[2]].innerText) {
-					return true;
-				}
-			}
-			return false;
-		}
+		return false;
+	}
 
-		function checkTie() {
-			let cells = document.querySelectorAll("button");
-			for (let cell of cells) {
-				if (cell.innerText == "-") {
-					return false;
-				}
-			}
-			return true;
-		}
-	</script>
+	var cells = document.getElementsByTagName("td");
+	for (var i = 0; i < cells.length; i++) {
+		cells[i].addEventListener("click", handleClick);
+	}
+
+	document.getElementById("message").innerHTML = turn + "'s turn";
+</script>
+
 </body>
 </html>
